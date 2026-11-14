@@ -5,6 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Dialogue Videos | Classroom Library</title>
 <meta name="description" content="Short videos made from text dialogues, with notes for teachers.">
+<script>
+  try {
+    var saved = localStorage.getItem("theme");
+    if (saved === "dark" || saved === "light") document.documentElement.setAttribute("data-theme", saved);
+  } catch (e) {}
+</script>
 <style>
   :root {
     --ink: #1b2433;
@@ -19,8 +25,15 @@
     --serif: Georgia, "Times New Roman", serif;
     --sans: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
   }
+  :root { color-scheme: light; }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --ink: #e8ecf3; --muted: #a5aec2; --paper: #121a27;
+    --card: #1a2435; --navy: #0d1b2e; --line: #2c3850; --green: #7fc5ae;
+  }
   @media (prefers-color-scheme: dark) {
-    :root {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
       --ink: #e8ecf3; --muted: #a5aec2; --paper: #121a27;
       --card: #1a2435; --navy: #0d1b2e; --line: #2c3850; --green: #7fc5ae;
     }
@@ -35,9 +48,15 @@
   :focus-visible { outline: 3px solid var(--chalk); outline-offset: 2px; }
   .wrap { max-width: 960px; margin: 0 auto; padding: 0 1.1rem; }
 
-  header.top { background: #17304f; color: #fff; border-bottom: 5px solid var(--chalk); }
-  header.top .wrap { padding-top: 2.5rem; padding-bottom: 2.5rem; }
-  .site-name { font-size: .95rem; margin: 0 0 .6rem; color: #c9d4e6; }
+  header.top { background: var(--navy); color: #fff; border-bottom: 5px solid var(--chalk); }
+  header.top .wrap { padding-top: 1.5rem; padding-bottom: 2.5rem; }
+  .top-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .75rem; margin-bottom: 1.25rem; }
+  .site-name { font-size: .95rem; margin: 0; color: #c9d4e6; max-width: none; }
+  #theme-toggle {
+    font: inherit; font-size: .9rem; color: #fff; background: transparent; cursor: pointer;
+    border: 1px solid #5d7699; border-radius: var(--radius); padding: .5rem .9rem; min-height: 44px;
+  }
+  #theme-toggle:hover { background: #24436a; }
   h1 { font: 700 clamp(1.9rem, 6vw, 3rem)/1.15 var(--serif); margin: 0 0 1rem; max-width: 22ch; }
   .intro { max-width: 60ch; margin: 0; color: #e3e9f3; font-size: 1.05rem; }
   nav { margin-top: 1.5rem; display: flex; flex-wrap: wrap; gap: .6rem; }
@@ -56,141 +75,4 @@
   .idea { display: grid; gap: 1rem; grid-template-columns: 1fr; }
   .fact {
     background: var(--card); border: 1px solid var(--line);
-    border-left: 5px solid var(--green); border-radius: var(--radius); padding: 1rem 1.1rem;
-  }
-  .fact h3 { font-size: 1.05rem; }
-  .fact p { margin: 0; color: var(--muted); }
-
-  .grid { display: grid; gap: 1.25rem; grid-template-columns: 1fr; }
-  .video-card {
-    background: var(--card); border: 1px solid var(--line);
-    border-radius: var(--radius); overflow: hidden; display: flex; flex-direction: column;
-  }
-  .frame { aspect-ratio: 16 / 9; background: #0f1b2d; display: block; width: 100%; }
-  .placeholder {
-    display: flex; flex-direction: column; justify-content: center; gap: .35rem;
-    padding: 1.2rem 1.4rem; color: #cfd8e6; font: .95rem/1.5 ui-monospace, Menlo, Consolas, monospace;
-    background:
-      repeating-linear-gradient(#0f1b2d 0 27px, #16263d 27px 28px);
-  }
-  .placeholder b { color: var(--chalk); font-weight: 600; }
-  .placeholder span { opacity: .7; }
-  .body { padding: 1.1rem 1.2rem 1.3rem; }
-  .meta { margin: 0 0 .8rem; color: var(--muted); font-size: .9rem; }
-  dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: .35rem 1rem; font-size: .95rem; }
-  dt { font-weight: 700; }
-  dd { margin: 0; color: var(--muted); }
-  details { margin-top: 1rem; border-top: 1px solid var(--line); padding-top: .8rem; }
-  summary { cursor: pointer; font-weight: 600; min-height: 44px; display: flex; align-items: center; }
-  details p { color: var(--muted); font-size: .95rem; margin: .4rem 0 0; }
-
-  footer { margin-top: 3rem; padding: 1.5rem 0 2.5rem; border-top: 1px solid var(--line); color: var(--muted); font-size: .9rem; }
-  footer p { margin: 0; }
-
-  @media (min-width: 640px) {
-    .idea { grid-template-columns: repeat(3, 1fr); }
-    .grid { grid-template-columns: repeat(2, 1fr); }
-    .wrap { padding: 0 1.5rem; }
-  }
-  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
-</style>
-</head>
-<body>
-
-<header class="top">
-  <div class="wrap">
-    <p class="site-name">Department of Second Language Studies, University of Hawaiʻi at Mānoa</p>
-    <h1>Dialogues you can watch, not just read</h1>
-    <p class="intro">
-      [Intro placeholder] This page collects short videos made from text dialogues.
-      Each video turns a PDF script into something students can see and hear.
-      Replace this paragraph with a few sentences about who the videos are for and how to use them in class.
-    </p>
-    <nav aria-label="Page sections">
-      <a href="#idea">The basic idea</a>
-      <a href="#videos">Videos</a>
-    </nav>
-  </div>
-</header>
-
-<main class="wrap">
-  <section id="idea" aria-labelledby="idea-h">
-    <h2 id="idea-h">The basic idea</h2>
-    <p>[Placeholder] Describe in two or three sentences why you turn written dialogues into video and what you hope students gain.</p>
-    <div class="idea">
-      <div class="fact"><h3>Source</h3><p>[Fact: where the dialogues come from, such as a textbook, your own writing, or a public-domain script.]</p></div>
-      <div class="fact"><h3>Method</h3><p>[Fact: how each PDF becomes a video, such as voices, captions, or slides.]</p></div>
-      <div class="fact"><h3>Best use</h3><p>[Fact: grade level, subject, and when in a lesson to play the videos.]</p></div>
-    </div>
-  </section>
-
-  <section id="videos" aria-labelledby="videos-h">
-    <h2 id="videos-h">Videos</h2>
-    <p>[Placeholder] Short note on how the videos are ordered or how to pick one.</p>
-    <div class="grid" id="video-grid"></div>
-  </section>
-</main>
-
-<footer>
-  <div class="wrap"><p>[Contact, credits, or license note]</p></div>
-</footer>
-
-<script>
-  // To add a video: copy one entry below.
-  // Set "src" to your video file or link (for example "videos/dialogue-1.mp4").
-  // Leave "src" empty to show a placeholder frame.
-  const videos = [
-    { title: "Video title 1", src: "", length: "0:00", pdf: "dialogue-1.pdf", level: "[Grade or level]", topic: "[Topic or skill]", speakers: "[Number of speakers]", notes: "[Teacher notes, discussion questions, or vocabulary for this video.]" },
-    { title: "Video title 2", src: "", length: "0:00", pdf: "dialogue-2.pdf", level: "[Grade or level]", topic: "[Topic or skill]", speakers: "[Number of speakers]", notes: "[Teacher notes, discussion questions, or vocabulary for this video.]" },
-    { title: "Video title 3", src: "", length: "0:00", pdf: "dialogue-3.pdf", level: "[Grade or level]", topic: "[Topic or skill]", speakers: "[Number of speakers]", notes: "[Teacher notes, discussion questions, or vocabulary for this video.]" },
-    { title: "Video title 4", src: "", length: "0:00", pdf: "dialogue-4.pdf", level: "[Grade or level]", topic: "[Topic or skill]", speakers: "[Number of speakers]", notes: "[Teacher notes, discussion questions, or vocabulary for this video.]" }
-  ];
-
-  const grid = document.getElementById("video-grid");
-
-  videos.forEach(function (v, i) {
-    const card = document.createElement("article");
-    card.className = "video-card";
-
-    let media;
-    if (v.src) {
-      media = document.createElement("video");
-      media.className = "frame";
-      media.controls = true;
-      media.preload = "none";
-      media.setAttribute("playsinline", "");
-      media.src = v.src;
-    } else {
-      media = document.createElement("div");
-      media.className = "frame placeholder";
-      media.innerHTML = "<b>SPEAKER A:</b><span>[Video goes here]</span><b>SPEAKER B:</b><span>[Add a file in the script below]</span>";
-    }
-    card.appendChild(media);
-
-    const body = document.createElement("div");
-    body.className = "body";
-    const h = document.createElement("h3");
-    h.textContent = v.title;
-    const meta = document.createElement("p");
-    meta.className = "meta";
-    meta.textContent = "Length " + v.length + ". Source file: " + v.pdf;
-    const dl = document.createElement("dl");
-    [["Level", v.level], ["Topic", v.topic], ["Speakers", v.speakers]].forEach(function (row) {
-      const dt = document.createElement("dt"); dt.textContent = row[0];
-      const dd = document.createElement("dd"); dd.textContent = row[1];
-      dl.append(dt, dd);
-    });
-    const det = document.createElement("details");
-    const sum = document.createElement("summary");
-    sum.textContent = "Teacher notes";
-    const p = document.createElement("p");
-    p.textContent = v.notes;
-    det.append(sum, p);
-
-    body.append(h, meta, dl, det);
-    card.appendChild(body);
-    grid.appendChild(card);
-  });
-</script>
-</body>
-</html>
+    border-left: 5px solid var(--green);
